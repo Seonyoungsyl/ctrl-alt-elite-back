@@ -4,17 +4,12 @@ from pydantic import BaseModel
 from typing import Optional
 from passlib.context import CryptContext
 from models import UserSignup, UserLogin
-
-# app = FastAPI()
+from database import db
 
 auth_router = APIRouter()
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# MongoDB connection
-client = AsyncIOMotorClient("mongodb://localhost:27017")
-db = client.user_db
 
 # Helper functions
 def get_password_hash(password: str):
