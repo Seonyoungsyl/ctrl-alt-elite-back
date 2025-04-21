@@ -3,6 +3,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 from typing import Optional
 from passlib.context import CryptContext
+from models import UserSignup, UserLogin
 
 # app = FastAPI()
 
@@ -14,17 +15,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # MongoDB connection
 client = AsyncIOMotorClient("mongodb://localhost:27017")
 db = client.user_db
-
-# Models
-class UserSignup(BaseModel):
-    accountType: str
-    fullName: str
-    email: str
-    password: str
-
-class UserLogin(BaseModel):
-    email: str
-    password: str
 
 # Helper functions
 def get_password_hash(password: str):
