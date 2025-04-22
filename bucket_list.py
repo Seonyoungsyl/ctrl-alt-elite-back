@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from uuid import uuid4
-from database import db
 from models import Task, BucketList
+from typing import List
+from database import db
 
 bucketlist_router = APIRouter()
 
@@ -9,20 +10,37 @@ bucketlist_router = APIRouter()
 users_collection = db["profiles"]
 bucketlist_collection = db["bucketlists"]
 
-# Helper function to get user and check their role
+# Helper function to get user and their role
 async def get_user_role(email: str):
     user = await users_collection.find_one({"email": email})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user["role"]
 
-# Get bucket list
+# Get bucket list for mentor group
 @bucketlist_router.get("/{mentor_name}/bucketlist", response_model=BucketList)
 async def get_bucketlist(mentor_name: str):
     bucket = await bucketlist_collection.find_one({"mentor_name": mentor_name})
     if not bucket:
         raise HTTPException(status_code=404, detail="Bucket list not found")
     return bucket
+
+# Get all tasks in a bucket list
+@bucketlist_router.get("/bucketlist/{mentor_name}", response_model=List[Task])
+async def get_bucketlist_tasks(mentor_name: str):
+    bucketlist = await bucketlist_collection.find_one({"mentor_name": mentor_name})
+    if not bucketlist:
+        raise HTTPException(status_code=404, detail="Bucket list not found")
+    return bucketlist.get("tasks", [])
+
+# Admin can view all bucketlists
+@bucketlist_router.get("/bucketlist", response_model=List[dict])
+async def get_all_bucketlists():
+    bucketlists = []
+    async for doc in bucketlist_collection.find():
+        doc["_id"] = str(doc["_id"])
+        bucketlists.append(doc)
+    return bucketlists
 
 # Add tasks (Admins & Mentors only)
 @bucketlist_router.post("/{mentor_name}/bucketlist")
