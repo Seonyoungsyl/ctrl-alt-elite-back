@@ -15,5 +15,3 @@ MONGODB_URI = os.getenv("MONGODB_URI")
 # MongoDB connection
 client = AsyncIOMotorClient(MONGODB_URI)
 db = client["app"]
-
-
