@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from auth import auth_router
 from profile import profile_router
 from group import group_router
+from bucket_list import bucketlist_router
 
 app = FastAPI()
 
@@ -19,3 +20,4 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(profile_router, prefix="/profile", tags=["profile"])
 app.include_router(group_router, prefix="/group", tags=["group"])
+app.include_router(bucketlist_router, prefix="/bucketlist", tags=["bucketlist"])

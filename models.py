@@ -1,6 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
+from uuid import uuid4
 
 # Authentication Models
 class UserSignup(BaseModel):
@@ -32,4 +33,16 @@ class UpdateProfile(BaseModel):
 class ProfileOut(Profile):
     id: str = Field(alias="_id")
 
-    
+# Bucket List Models
+class Task(BaseModel):
+    id: str = None
+    description: str
+    completed: bool = False
+
+    def model_post_init(self, __context):
+        if self.id is None:
+            self.id = str(uuid4())
+
+class BucketList(BaseModel):
+    mentor_name: str
+    tasks: List[Task]
