@@ -30,7 +30,13 @@ async def signup(user: UserSignup):
     user_dict["password"] = get_password_hash(user_dict["password"])
     result = await db.users.insert_one(user_dict)
     
-    return {"message": "User created successfully", "id": str(result.inserted_id)}
+    # Return the same user information as login
+    return {"message": "User created successfully", "user": {
+        "id": str(result.inserted_id),
+        "accountType": user.accountType,
+        "fullName": user.fullName,
+        "email": user.email
+    }}
 
 @auth_router.post("/login")
 async def login(user: UserLogin):

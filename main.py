@@ -4,6 +4,7 @@ from auth import auth_router
 from profile import profile_router
 from group import group_router
 from bucket_list import bucketlist_router
+from images import router as images_router
 
 app = FastAPI()
 
@@ -21,3 +22,4 @@ app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(profile_router, prefix="/profile", tags=["profile"])
 app.include_router(group_router, prefix="/group", tags=["group"])
 app.include_router(bucketlist_router, prefix="/bucketlist", tags=["bucketlist"])
+app.include_router(images_router) # Image handling routes

@@ -1,7 +1,23 @@
 # User Management API
 
-Hi guys, it has user signup and login with password hashing.
+Hi guys! This is our backend for the hackathon project. It handles user accounts, profiles, bucket lists, groups, and now image storage too!
 
+## Tech Stack & Dependencies
+
+We're using the following technologies:
+
+- **FastAPI**: Modern, fast web framework for building APIs
+- **MongoDB**: NoSQL database for storing all our data
+- **Motor**: Async MongoDB driver for Python
+- **Pydantic**: Data validation and settings management
+- **Passlib/bcrypt**: For secure password hashing
+- **GridFS**: For storing and retrieving images (built into MongoDB)
+- **Python-dotenv**: For loading environment variables
+- **Python-multipart**: For handling file uploads
+
+All these dependencies are listed in the `requirements.txt` file, so you can install everything at once.
+
+## Setup Requirements
 
 Before you start, make sure you have these installed:
 - Python 3.x
@@ -47,13 +63,24 @@ python main.py
 
 The server will start at `http://localhost:8000`
 
+## API Features
+
+- **Authentication**: Signup and login with secure password hashing
+- **Profile Management**: Create and update user profiles
+- **Group Management**: Create and manage groups
+- **Bucket Lists**: Create and manage bucket lists
+- **Image Storage**: Upload, retrieve, and delete images
+
 ## Testing the API
 
-Visit `http://localhost:8000/docs` in your browser to see the API documentation. You can test the endpoints directly from there
+Visit `http://localhost:8000/docs` in your browser to see the API documentation. You can test all endpoints directly from there!
 
-You can sign up a new user, and log in with those credentials:
+## Troubleshooting
 
-If you run into any issues:
+If you run into issues:
 1. Make sure MongoDB is running
 2. Check that all dependencies are installed
 3. Make sure port 8000 isn't being used by another application
+4. Check the console for any error messages
+
+Need help? Reach out to any team member!
