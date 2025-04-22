@@ -1,16 +1,12 @@
 # User Management API
 
-Hi guys! This is our backend for the hackathon project. It handles user accounts, profiles, bucket lists, groups, and now image storage too!
-
 ## Tech Stack & Dependencies
 
-We're using the following technologies:
-
-- **FastAPI**: Modern, fast web framework for building APIs
-- **MongoDB**: NoSQL database for storing all our data
+- **FastAPI**: 
+- **MongoDB**: 
 - **Motor**: Async MongoDB driver for Python
 - **Pydantic**: Data validation and settings management
-- **Passlib/bcrypt**: For secure password hashing
+- **Passlib/bcrypt**: For password hashing
 - **GridFS**: For storing and retrieving images (built into MongoDB)
 - **Python-dotenv**: For loading environment variables
 - **Python-multipart**: For handling file uploads
@@ -65,7 +61,7 @@ The server will start at `http://localhost:8000`
 
 ## API Features
 
-- **Authentication**: Signup and login with secure password hashing
+- **Authentication**: Signup and login
 - **Profile Management**: Create and update user profiles
 - **Group Management**: Create and manage groups
 - **Bucket Lists**: Create and manage bucket lists
