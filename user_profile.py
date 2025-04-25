@@ -27,7 +27,7 @@ async def get_profile(email: str):
 
 
     try:
-        user = await users_collection.find_one({"email": email})
+        user = await users_collection.find_one({"email": email.strip()}) # strip whitespace from email
         print("Finished search")
     except Exception as e:
         print(f"Exception during database query: {e}")
