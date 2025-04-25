@@ -14,7 +14,7 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
-# Profile Model
+# Profile Models
 class Profile(BaseModel):
     fullName: str
     email: str

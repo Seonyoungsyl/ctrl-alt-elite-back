@@ -5,7 +5,7 @@ from typing import List
 
 group_router = APIRouter()
 
-users_collection = db["profiles"]
+users_collection = db["users"]
 
 
 # GET LIST OF USERS FOR SAME MENTOR

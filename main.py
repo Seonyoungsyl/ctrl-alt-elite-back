@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from auth import auth_router
-from profile import profile_router
+from user_profile import profile_router
 from group import group_router
 from bucket_list import bucketlist_router
 from images import router as images_router
