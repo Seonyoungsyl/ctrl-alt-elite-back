@@ -2,10 +2,23 @@ from fastapi import FastAPI, APIRouter, HTTPException, Body
 from database import db
 from models import Profile, ProfileOut, UpdateProfile
 from pymongo import ReturnDocument
+from typing import List
 
 profile_router = APIRouter()
 users_collection = db["users"]
 
+@profile_router.get("/role/{account_type}", response_model=List[ProfileOut])
+async def get_by_role(account_type: str):
+    cursor = users_collection.find({"accountType": account_type})
+    
+    if not cursor:
+        raise HTTPException(status_code=404, detail=f"No users found for role {account_type}")
+    
+    users = []
+    async for doc in cursor:
+        doc["_id"] = str(doc["_id"])
+        users.append(doc)
+    return users
 
 # GET PROFILE INFO OF USER
 @profile_router.get("", response_model=ProfileOut)

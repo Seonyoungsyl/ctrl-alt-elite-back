@@ -18,8 +18,8 @@ class UserLogin(BaseModel):
 class Profile(BaseModel):
     fullName: str
     email: str
-    role: str
-    mentor_name: str
+    accountType: str
+    mentor_name: Optional[str] = None
     fun_facts: str
     points: int
 
