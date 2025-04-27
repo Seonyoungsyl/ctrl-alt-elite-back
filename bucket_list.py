@@ -7,7 +7,7 @@ from database import db
 bucketlist_router = APIRouter()
 
 # Collections
-users_collection = db["profiles"]
+users_collection = db["users"]
 bucketlist_collection = db["bucketlists"]
 
 # Helper function to get user and their role
