@@ -46,23 +46,27 @@ async def get_all_bucketlists():
 @bucketlist_router.post("/{mentor_name}/bucket_lists")
 async def add_task(mentor_name: str, task: Task, user_email: str):
     role = await get_user_role(user_email)
-    if role not in ["mentor", "admin"]:
-        raise HTTPException(status_code=403, detail="Not authorized to add tasks")
 
     task.id = str(uuid4())  # Ensure task has a UUID
 
+    task_data = {
+        "id": task.id,
+        "description": task.description,
+        "completed": False
+    }
+
     result = await bucketlist_collection.update_one(
         {"mentor_name": mentor_name},
-        {"$push": {"tasks": task.dict()}},
+        {"$push": {"tasks": task_data}},
         upsert=True
     )
-    return {"message": "Task added", "task_id": task.id}
+    return {"message": "Task added"}
 
 # Mark task complete and add points (Mentors & Admins only)
 @bucketlist_router.put("/{mentor_name}/bucket_lists/complete/{task_id}")
 async def complete_task(mentor_name: str, task_id: str, user_email: str):
     role = await get_user_role(user_email)
-    if role not in ["mentor", "admin"]:
+    if role not in ["Mentor", "Admin"]:
         raise HTTPException(status_code=403, detail="Not authorized to complete tasks")
 
     bucket = await bucketlist_collection.find_one({"mentor_name": mentor_name})
@@ -72,7 +76,7 @@ async def complete_task(mentor_name: str, task_id: str, user_email: str):
     tasks = bucket["tasks"]
     found = False
     for task in tasks:
-        if task["id"] == task_id:
+        if task["_id"] == task_id:
             if task["completed"]:
                 return {"message": "Task already completed"}
             task["completed"] = True
@@ -139,3 +143,31 @@ async def toggle_task_completion(
     )
 
     return {"message": f"Task marked {'complete' if completed else 'incomplete'} and points {'awarded' if completed else 'removed'}"}
+
+# Delete task (Mentors & Admins only)
+@bucketlist_router.delete("/{mentor_name}/bucket_lists/task/{task_id}")
+async def delete_task(mentor_name: str, task_id: str, user_email: str):
+    role = await get_user_role(user_email)
+    if role not in ["Mentor", "Admin"]:
+        raise HTTPException(status_code=403, detail="Not authorized to delete tasks")
+    
+    bucket = await bucketlist_collection.find_one({"mentor_name": mentor_name})
+    if not bucket:
+        raise HTTPException(status_code=404, detail="Bucket list not found")
+    
+    # Filter out the task to be deleted
+    tasks = bucket.get("tasks", [])
+    original_count = len(tasks)
+    tasks = [task for task in tasks if task["id"] != task_id]
+    
+    # Check if any task was removed
+    if len(tasks) == original_count:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    # Update the task list
+    await bucketlist_collection.update_one(
+        {"mentor_name": mentor_name},
+        {"$set": {"tasks": tasks}}
+    )
+    
+    return {"message": f"Task deleted successfully"}
