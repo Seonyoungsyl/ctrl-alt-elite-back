@@ -17,7 +17,7 @@ async def get_user_role(email: str):
         raise HTTPException(status_code=404, detail="User not found")
     return user["accountType"]
 
-# Get bucket list for mentor group (works)
+# Get bucket list for mentor group
 @bucketlist_router.get("/{mentor_name}/bucketlist", response_model=BucketList)
 async def get_bucketlist(mentor_name: str):
     bucket = await bucketlist_collection.find_one({"mentor_name": mentor_name})
@@ -25,7 +25,7 @@ async def get_bucketlist(mentor_name: str):
         raise HTTPException(status_code=404, detail="Bucket list not found")
     return bucket
 
-# Get all tasks in a bucket list (works)
+# Get all tasks in a bucket list
 @bucketlist_router.get("/{mentor_name}/bucketlist", response_model=List[Task])
 async def get_bucketlist_tasks(mentor_name: str):
     bucketlist = await bucketlist_collection.find_one({"mentor_name": mentor_name})
@@ -33,7 +33,7 @@ async def get_bucketlist_tasks(mentor_name: str):
         raise HTTPException(status_code=404, detail="Bucket list not found")
     return bucketlist.get("tasks", [])
 
-# View all bucketlists (works)
+# View all bucketlists
 @bucketlist_router.get("/", response_model=List[dict])
 async def get_all_bucketlists():
     bucketlists = []
@@ -42,7 +42,7 @@ async def get_all_bucketlists():
         bucketlists.append(doc)
     return bucketlists
 
-# Add tasks (works)
+# Add tasks
 @bucketlist_router.post("/{mentor_name}/bucketlist")
 async def add_task(mentor_name: str, task: Task, user_email: str):
     role = await get_user_role(user_email)

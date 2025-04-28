@@ -5,11 +5,11 @@ from typing import List
 
 group_router = APIRouter()
 
-users_collection = db["profiles"]
+users_collection = db["users"]
 
 
 # GET LIST OF USERS FOR SAME MENTOR
-@group_router.get("/group/{mentor_name}", response_model=List[ProfileOut])
+@group_router.get("/{mentor_name}", response_model=List[ProfileOut])
 async def get_members(mentor_name:str):
     cursor = users_collection.find({"mentor_name": mentor_name})
     
@@ -24,7 +24,7 @@ async def get_members(mentor_name:str):
 
 # UPDATE POINT TOTALS FOR GROUP
 # change the URL thing after bucketlist backend is complete
-@group_router.put("/group/{mentor_name}/bucketlist/complete")
+@group_router.put("/{mentor_name}/bucketlist/complete")
 async def update_points(mentor_name:str, points_added:int):
     members = users_collection.find({"mentor_name": mentor_name})
     updated = 0

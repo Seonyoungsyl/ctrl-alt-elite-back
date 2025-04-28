@@ -13,5 +13,5 @@ load_dotenv()
 MONGODB_URI = os.getenv("MONGODB_URI")
 
 # MongoDB connection
-client = AsyncIOMotorClient(MONGODB_URI)
+client = AsyncIOMotorClient(MONGODB_URI, tlsAllowInvalidCertificates=True)
 db = client["bootcamp"]
