@@ -35,7 +35,8 @@ async def signup(user: UserSignup):
         "id": str(result.inserted_id),
         "accountType": user.accountType,
         "fullName": user.fullName,
-        "email": user.email
+        "email": user.email,
+        "mentor_name": user.mentor_name,
     }}
 
 @auth_router.post("/login")
@@ -53,5 +54,6 @@ async def login(user: UserLogin):
         "id": str(db_user["_id"]),
         "accountType": db_user["accountType"],
         "fullName": db_user["fullName"],
-        "email": db_user["email"]
+        "email": db_user["email"],
+        "mentor_name": db_user["mentor_name"]
     }}

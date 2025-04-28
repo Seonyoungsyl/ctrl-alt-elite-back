@@ -9,6 +9,9 @@ class UserSignup(BaseModel):
     fullName: str
     email: str
     password: str
+    mentor_name: Optional[str] = None #Discuss with group
+    fun_facts: Optional[str] = ""   #Discuss with group
+    points: int = 0 #Discuss with group
 
 class UserLogin(BaseModel):
     email: str
@@ -26,7 +29,7 @@ class Profile(BaseModel):
 class UpdateProfile(BaseModel):
     fullName: Optional[str] = None
     email: Optional[str] = None
-    role: Optional[str] = None
+    #accountType: Optional[str] = None
     mentor_name: Optional[str] = None
     fun_facts: Optional[str] = None
 

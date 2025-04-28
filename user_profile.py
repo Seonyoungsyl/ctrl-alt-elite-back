@@ -56,7 +56,7 @@ async def update_profile(email:str, update:UpdateProfile = Body(...)):
     if len(update_data) > 0:
 
         update_result = await users_collection.find_one_and_update(
-           {"email": email},    # get user with email
+           {"email": email.strip()},    # get user with email
            {"$set": update_data},    # set fields in the 'update_data' dict (nonempty fields)
            return_document=ReturnDocument.AFTER     # makes mongo return updated version of document
         )
