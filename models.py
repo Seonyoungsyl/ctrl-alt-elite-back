@@ -25,6 +25,7 @@ class Profile(BaseModel):
     mentor_name: Optional[str] = None
     fun_facts: str
     points: int
+    profile_picture: Optional[str] = None  # Store the image ID
 
 class UpdateProfile(BaseModel):
     fullName: Optional[str] = None
@@ -32,6 +33,7 @@ class UpdateProfile(BaseModel):
     #accountType: Optional[str] = None
     mentor_name: Optional[str] = None
     fun_facts: Optional[str] = None
+    profile_picture: Optional[str] = None  # Allow updating profile picture
 
 class ProfileOut(Profile):
     id: str = Field(alias="_id")

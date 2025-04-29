@@ -25,7 +25,6 @@ async def get_by_role(account_type: str):
 async def get_profile(email: str):
     print(f"Received email: {email}")  # debugging (remember to remove later)
 
-
     try:
         user = await users_collection.find_one({"email": email.strip()}) # strip whitespace from email
         print("Finished search")
@@ -37,6 +36,11 @@ async def get_profile(email: str):
         raise HTTPException(status_code=404, detail="User not found")
 
     user["_id"] = str(user["_id"]) # convert ObjectID to str
+    
+    # If user has a profile picture, include the full URL
+    if user.get("profile_picture"):
+        user["profile_picture"] = f"/images/{user['profile_picture']}"
+    
     return user
 
 # UPDATE USER INFORMATION

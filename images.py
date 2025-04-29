@@ -15,7 +15,7 @@ class ImageResponse(dict):
     content_type: str
 
 @router.post("/upload", status_code=201)
-async def upload_image(file: UploadFile = File(...), user_id: str = None):
+async def upload_image(file: UploadFile = File(...), user_id: str = None, is_profile_picture: bool = False):
     """
     Uploading an image file and linking it to a user if needed
     """
@@ -31,6 +31,8 @@ async def upload_image(file: UploadFile = File(...), user_id: str = None):
     metadata = {"filename": file.filename, "content_type": content_type}
     if user_id:
         metadata["user_id"] = user_id
+        if is_profile_picture:
+            metadata["is_profile_picture"] = True
     
     # Saving the file info to MongoDB - Using the motor async client directly
     # First, create a file entry
@@ -50,11 +52,27 @@ async def upload_image(file: UploadFile = File(...), user_id: str = None):
     }
     await db.fs.chunks.insert_one(chunk_doc)
     
+    # If this is a profile picture, update the user's profile
+    if user_id and is_profile_picture:
+        await db.users.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"profile_picture": str(file_id)}}
+        )
+    
     return {
         "image_id": str(file_id),
         "filename": file.filename,
         "content_type": content_type
     }
+
+@router.post("/profile-picture/{user_id}")
+async def set_profile_picture(user_id: str, file: UploadFile = File(...)):
+    """
+    Set a user's profile picture
+    """
+    # First upload the image
+    image_response = await upload_image(file=file, user_id=user_id, is_profile_picture=True)
+    return image_response
 
 @router.get("/{image_id}")
 async def get_image(image_id: str):
