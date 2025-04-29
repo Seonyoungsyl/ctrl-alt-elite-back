@@ -30,13 +30,16 @@ async def signup(user: UserSignup):
     user_dict["password"] = get_password_hash(user_dict["password"])
     result = await db.users.insert_one(user_dict)
     
+    db_user = await db.users.find_one({"email": user.email})
     # Return the same user information as login
-    return {"message": "User created successfully", "user": {
-        "id": str(result.inserted_id),
-        "accountType": user.accountType,
-        "fullName": user.fullName,
-        "email": user.email,
-        "mentor_name": user.mentor_name,
+    return {"message": "Signup successful", "user": {
+        "id": str(db_user["_id"]),
+        "accountType": db_user["accountType"],
+        "fullName": db_user["fullName"],
+        "email": db_user["email"],
+        "mentor_name": db_user["mentor_name"],
+        "profile_pic": db_user["profile_pic"] if "profile_pic" in db_user else None,
+        "fun_facts": db_user["fun_facts"],
     }}
 
 @auth_router.post("/login")
@@ -55,5 +58,7 @@ async def login(user: UserLogin):
         "accountType": db_user["accountType"],
         "fullName": db_user["fullName"],
         "email": db_user["email"],
-        "mentor_name": db_user["mentor_name"]
+        "mentor_name": db_user["mentor_name"],
+        "profile_pic": db_user["profile_pic"] if "profile_pic" in db_user else None,
+        "fun_facts": db_user["fun_facts"],
     }}

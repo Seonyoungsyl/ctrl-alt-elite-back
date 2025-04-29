@@ -30,4 +30,4 @@ app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(profile_router, prefix="/profile", tags=["profile"])
 app.include_router(group_router, prefix="/group", tags=["group"])
 app.include_router(bucketlist_router, prefix="/bucketlist", tags=["bucketlist"])
-app.include_router(images_router) # Image handling routes
+#app.include_router(images_router) # Image handling routes
