@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from auth import auth_router
 from user_profile import profile_router
 from group import group_router
 from bucket_list import bucketlist_router
 from images import router as images_router
+from database import db, check_storage_metrics
 
 app = FastAPI()
 
@@ -16,6 +17,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/metrics/storage")
+async def get_storage_metrics():
+    metrics = await check_storage_metrics()
+    if metrics is None:
+        raise HTTPException(status_code=500, detail="Failed to fetch storage metrics")
+    return metrics
 
 # routers for authentication (login/sign up), profile updates/viewing
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
