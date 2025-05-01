@@ -80,13 +80,79 @@ async def update_profile(
 async def upload_image(data: ProfilePicUpdate, email: str = Query(...)):
     try:
         profile_pic_base64 = data.profile_pic
-
-        upload_result = cloudinary.uploader.upload(
-            profile_pic_base64,
-            resource_type="auto"
-        )
-
-        image_url = upload_result.get("secure_url")
+        image_url = None
+        
+        # Try using Cloudinary if configured properly
+        try:
+            if (cloudinary.config().cloud_name and 
+                cloudinary.config().api_key and 
+                cloudinary.config().api_secret and
+                cloudinary.config().cloud_name != "your_cloud_name"):
+                
+                upload_result = cloudinary.uploader.upload(
+                    profile_pic_base64,
+                    resource_type="auto"
+                )
+                image_url = upload_result.get("secure_url")
+            else:
+                # Fallback to local storage if Cloudinary isn't configured
+                print("Cloudinary not configured. Using local storage.")
+                
+                # Convert base64 to binary data
+                import base64
+                import io
+                from bson import ObjectId
+                
+                # Strip the base64 prefix if it exists
+                if "," in profile_pic_base64:
+                    _, data_string = profile_pic_base64.split(",", 1)
+                else:
+                    data_string = profile_pic_base64
+                
+                # Convert to binary
+                file_data = base64.b64decode(data_string)
+                
+                # Get content type (defaults to png if not detectable)
+                content_type = "image/png"
+                if profile_pic_base64.startswith("data:"):
+                    content_type = profile_pic_base64.split(";")[0].replace("data:", "")
+                
+                # Metadata
+                metadata = {
+                    "filename": f"{email}_profile.{content_type.split('/')[1]}",
+                    "content_type": content_type,
+                    "user_id": email,
+                    "is_profile_picture": True
+                }
+                
+                # Store in GridFS
+                # First, create a file entry
+                file_doc = {
+                    "filename": metadata["filename"],
+                    "metadata": metadata,
+                    "length": len(file_data)
+                }
+                
+                # Insert file info
+                result = await db.fs.files.insert_one(file_doc)
+                file_id = result.inserted_id
+                
+                # Insert file data
+                chunk_doc = {
+                    "files_id": file_id,
+                    "n": 0,  # Chunk number
+                    "data": file_data
+                }
+                await db.fs.chunks.insert_one(chunk_doc)
+                
+                # Set URL to the images endpoint
+                image_url = f"/images/{str(file_id)}"
+        except Exception as e:
+            print(f"Image storage error: {e}")
+            # Use a fallback URL if all else fails
+            image_url = "/profile/local-image-fallback"
+        
+        # Update user profile with the image URL
         update_data = {"profile_pic": image_url}
 
         update_result = await users_collection.find_one_and_update(

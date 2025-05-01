@@ -92,6 +92,14 @@ async def complete_task(mentor_name: str, task_id: str, user_email: str):
         {"$set": {"tasks": tasks}}
     )
 
+    # Update points for both the mentor and everyone in their group
+    
+    # Update points for the mentor (by fullName)
+    await users_collection.update_one(
+        {"fullName": mentor_name},
+        {"$inc": {"points": 10}}
+    )
+    
     # Add 10 points to every member in the group
     await users_collection.update_many(
         {"mentor_name": mentor_name},
@@ -169,8 +177,16 @@ async def toggle_task_completion(
         {"$set": {"tasks": tasks}}
     )
 
-    # Update points for every member in the group
+    # Update points for both the mentor and everyone in their group
     points_delta = 10 if completed else -10
+    
+    # Update points for the mentor (by fullName)
+    await users_collection.update_one(
+        {"fullName": mentor_name},
+        {"$inc": {"points": points_delta}}
+    )
+    
+    # Update points for mentees in the group
     await users_collection.update_many(
         {"mentor_name": mentor_name},
         {"$inc": {"points": points_delta}}

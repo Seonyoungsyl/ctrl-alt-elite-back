@@ -31,19 +31,12 @@ async def signup(user: UserSignup):
     user_dict["password"] = get_password_hash(user_dict["password"])
     result = await db.users.insert_one(user_dict)
 
-    # Create default bucket list for mentors
+    # Create empty bucket list for mentors
     if user_dict["accountType"] == "Mentor":
-    # Create a bucket list with default task
-        default_task = {
-            "task_id": str(uuid4()),
-            "description": "Get boba",
-            "completed": False
-        }
-    
         bucket_list = {
             "_id": str(uuid4()),
             "mentor_name": user.fullName,
-            "tasks": [default_task]
+            "tasks": []  # Empty tasks array instead of default task
         }
         # Insert the bucket list into the database
         await db.bucket_lists.insert_one(bucket_list)

@@ -12,7 +12,7 @@ app = FastAPI()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"], # frontend port
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], # frontend ports
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,4 +30,4 @@ app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(profile_router, prefix="/profile", tags=["profile"])
 app.include_router(group_router, prefix="/group", tags=["group"])
 app.include_router(bucketlist_router, prefix="/bucketlist", tags=["bucketlist"])
-#app.include_router(images_router) # Image handling routes
+app.include_router(images_router) # Image handling routes
