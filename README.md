@@ -2,8 +2,8 @@
 
 ## Tech Stack & Dependencies
 
-- **FastAPI**: 
-- **MongoDB**: 
+- **FastAPI**: Fast Python API framework with type hints
+- **MongoDB**: NoSQL document database
 - **Motor**: Async MongoDB driver for Python
 - **Pydantic**: Data validation and settings management
 - **Passlib/bcrypt**: For password hashing
