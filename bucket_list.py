@@ -33,7 +33,7 @@ async def get_bucketlist_tasks(mentor_name: str):
         return []
     return bucketlist.get("tasks", [])
 
-# Admin can view all bucketlists
+# View all bucketlists
 @bucketlist_router.get("/bucket_lists", response_model=List[dict])
 async def get_all_bucketlists():
     bucketlists = []
@@ -42,7 +42,7 @@ async def get_all_bucketlists():
         bucketlists.append(doc)
     return bucketlists
 
-# Add tasks (Admins & Mentors only)
+# Add tasks (Mentors only)
 @bucketlist_router.post("/{mentor_name}/bucket_lists")
 async def add_task(mentor_name: str, task: Task, user_email: str):
     role = await get_user_role(user_email)
@@ -62,11 +62,11 @@ async def add_task(mentor_name: str, task: Task, user_email: str):
     )
     return {"message": "Task added"}
 
-# Mark task complete and add points (Mentors & Admins only)
+# Mark task complete and add points (Mentors only)
 @bucketlist_router.put("/{mentor_name}/bucket_lists/complete/{task_id}")
 async def complete_task(mentor_name: str, task_id: str, user_email: str):
     role = await get_user_role(user_email)
-    if role not in ["Mentor", "Admin"]:
+    if role != "Mentor":
         raise HTTPException(status_code=403, detail="Not authorized to complete tasks")
 
     bucket = await bucketlist_collection.find_one({"mentor_name": mentor_name})
@@ -108,7 +108,7 @@ async def complete_task(mentor_name: str, task_id: str, user_email: str):
 
     return {"message": "Task marked complete and points awarded"}
 
-# Toggle task completion and update points (Mentors & Admins only)
+# Toggle task completion and update points (Mentors only)
 @bucketlist_router.put("/{mentor_name}/bucket_lists/toggle/{task_id}")
 async def toggle_task_completion(
     mentor_name: str,
@@ -122,7 +122,7 @@ async def toggle_task_completion(
     role = await get_user_role(user_email)
     print(f"User role: {role}")
     
-    if role not in ["Mentor", "Admin"]:
+    if role != "Mentor":
         raise HTTPException(status_code=403, detail="Not authorized to toggle tasks")
 
     bucket = await bucketlist_collection.find_one({"mentor_name": mentor_name})
@@ -194,11 +194,11 @@ async def toggle_task_completion(
 
     return {"message": f"Task marked {'complete' if completed else 'incomplete'} and points {'awarded' if completed else 'removed'}"}
 
-# Delete task (Mentors & Admins only)
+# Delete task (Mentors only)
 @bucketlist_router.delete("/{mentor_name}/bucket_lists/task/{task_id}")
 async def delete_task(mentor_name: str, task_id: str, user_email: str):
     role = await get_user_role(user_email)
-    if role not in ["Mentor", "Admin"]:
+    if role != "Mentor":
         raise HTTPException(status_code=403, detail="Not authorized to delete tasks")
     
     bucket = await bucketlist_collection.find_one({"mentor_name": mentor_name})
